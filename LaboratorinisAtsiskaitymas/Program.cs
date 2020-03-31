@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace LaboratorinisAtsiskaitymas
 {
+    
     class Program
     {
         static void Main(string[] args)
@@ -16,18 +18,12 @@ namespace LaboratorinisAtsiskaitymas
             Console.ReadKey();
         }
 
-        struct Person
-        {
-            public string Name;
-            public string Surname;
-            public float median;
-            public float average;
-        }
+    
 
 
 
 
-        static void readTxt(ref List<Person> data, string filePath)
+        static void readTxt(ref List<Class1.Person> data, string filePath)
         {
          
             List<int> scores = new List<int>();
@@ -36,35 +32,42 @@ namespace LaboratorinisAtsiskaitymas
             float final_avg = 0.0f;
             float final_median = 0.0f;
 
-            string[] lines = System.IO.File.ReadAllLines(filePath);
-            foreach (string line in lines)
+            try
             {
-                List<string> values = line.Split(' ').ToList();
-                if (values[2] == "ND1")
-                { continue; }
-                for(int i = 2; i<values.Count-1; i++)
+                string[] lines = System.IO.File.ReadAllLines(filePath);
+                foreach (string line in lines)
                 {
-   
-                    scores.Add(Int32.Parse(values[i]));
+                    List<string> values = line.Split(' ').ToList();
+                    if (values[2] == "ND1")
+                    { continue; }
+                    for (int i = 2; i < values.Count - 1; i++)
+                    {
+
+                        scores.Add(Int32.Parse(values[i]));
+                    }
+                    egz = float.Parse(values[values.Count - 1]);
+                    final_avg = 0.3f * AVG(scores) + 0.7f * egz;
+                    final_median = 0.3f * Median(scores) + 0.7f * egz; ;
+
+
+                    data.Add(new Class1.Person() { Name = values[0], Surname = values[1], median = final_median, average = final_avg });
+                    scores.Clear();
+                    Console.WriteLine(line);
                 }
-                egz = float.Parse(values[values.Count-1]);
-                final_avg = 0.3f * AVG(scores) + 0.7f * egz;
-                final_median = 0.3f * Median(scores) + 0.7f * egz; ;
-
-
-                data.Add(new Person() { Name = values[0], Surname = values[1], median = final_median, average = final_avg });
-                scores.Clear();
-                Console.WriteLine(line);
             }
+            catch(System.IO.IOException e)
+            {
+                Console.WriteLine(e);
+            }
+           
         }
-
 
         static void v1()
         {
             Random randGenerator = new Random();
             string input;
             string filePath = "C:/Users/mantask/Desktop/LaboratorinisAtsiskaitymas/studentai.txt";
-            List<Person> data = new List<Person>();
+            List<Class1.Person> data = new List<Class1.Person>();
 
             Console.WriteLine("Nuskaityti duomenis is failo studentai.txt?, press y");
             if (Console.ReadLine() == "y")
@@ -129,7 +132,7 @@ namespace LaboratorinisAtsiskaitymas
                     float final_avg = 0.3f * AVG(scores) + 0.7f * (float)egz;
                     float final_median = 0.3f * Median(scores) + 0.7f * (float)egz; ;
 
-                    data.Add( new Person(){Name=fullName[0], Surname=fullName[1], median= final_median, average= final_avg});
+                    data.Add( new Class1.Person(){Name=fullName[0], Surname=fullName[1], median= final_median, average= final_avg});
                   
                 }
 
@@ -141,7 +144,7 @@ namespace LaboratorinisAtsiskaitymas
 
 
         }
-        static void printData(List<Person> data)
+        static void printData(List<Class1.Person> data)
         {
 
             var sb = new System.Text.StringBuilder();
@@ -190,69 +193,5 @@ namespace LaboratorinisAtsiskaitymas
         }
 
 
-        static void MENU()
-        {
-
-            bool run = true;
-
-
-            while (run)
-            {
-            
-            Console.WriteLine("Choose an option:");
-            Console.WriteLine("1) uzd 1");
-            Console.WriteLine("2) uzd 2");
-            Console.WriteLine("TERMINATE Exit");
-
-
-            string x = Console.ReadLine();
-            if(x == "1")
-            {
-                uzd1();
-            }
-            else if(x == "2")
-            {
-                    uzd2();
-            }
-           else if (x == "TERMINATE")
-                {
-                    run = false;
-                }
-            else { uzd1(); }
-
-            }
-        }
-        static void uzd1()
-        {
-            double x = -10;
-            while (x < 100)
-            {
-                double y = Math.Pow(Math.Sin(x), 2) - Math.Pow(Math.Cos(x), -2);
-                x = x + 0.25;
-                Console.WriteLine("x={0} _ y={1}", x, y);
-            }
-        }
-        static void uzd2()
-        {
-     
-            var sb = new System.Text.StringBuilder();
-            sb.Append("|-------------------------------------------------|\n");
-            sb.Append("|NR.  |Name      |   B. Year|   B.Month|    B. Day|\n");
-
-           
-            for (int index = 0; index < 7; index++)
-            {
-                Console.WriteLine("Iveskite duomenis Pavyzdys: Vardas,Gimimo metai,Gimimo mėnesis, GImimo diena");
-                string x = Console.ReadLine();
-                List<string> arr = x.Split(',').ToList();
-                
-                sb.Append("|-------------------------------------------------|\n");
-                sb.Append(String.Format("|{0, 5}|{1, -10}|{2, 10}|{3, 10}|{4, 10}|\n", index, arr[0], arr[1], arr[2], arr[3]));
-            }
-            sb.Append("|-------------------------------------------------|\n");
-            Console.WriteLine(sb);
-
-
-        }
     }
 }

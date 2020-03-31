@@ -11,17 +11,10 @@ namespace LaboratorinisAtsiskaitymas
         static void Main(string[] args)
         {
 
-
+       
             v1();
             Console.ReadKey();
         }
-
-
-
-
-
-
-
 
         struct Person
         {
@@ -34,18 +27,59 @@ namespace LaboratorinisAtsiskaitymas
 
 
 
+        static void readTxt(ref List<Person> data, string filePath)
+        {
+         
+            List<int> scores = new List<int>();
 
+            float egz = 0.0f;
+            float final_avg = 0.0f;
+            float final_median = 0.0f;
+
+            string[] lines = System.IO.File.ReadAllLines(filePath);
+            foreach (string line in lines)
+            {
+                List<string> values = line.Split(' ').ToList();
+                if (values[2] == "ND1")
+                { continue; }
+                for(int i = 2; i<values.Count-1; i++)
+                {
+   
+                    scores.Add(Int32.Parse(values[i]));
+                }
+                egz = float.Parse(values[values.Count-1]);
+                final_avg = 0.3f * AVG(scores) + 0.7f * egz;
+                final_median = 0.3f * Median(scores) + 0.7f * egz; ;
+
+
+                data.Add(new Person() { Name = values[0], Surname = values[1], median = final_median, average = final_avg });
+                scores.Clear();
+                Console.WriteLine(line);
+            }
+        }
 
 
         static void v1()
         {
             Random randGenerator = new Random();
+            string input;
+            string filePath = "C:/Users/mantask/Desktop/LaboratorinisAtsiskaitymas/studentai.txt";
+            List<Person> data = new List<Person>();
+
+            Console.WriteLine("Nuskaityti duomenis is failo studentai.txt?, press y");
+            if (Console.ReadLine() == "y")
+            {
+                readTxt(ref data, filePath);
+            }
+
+
+         
             Console.WriteLine("Įveskite Studento vardą, pavardę, namų darbų ir egzamino rezultatą. Pavyzdys: Vardas Pavardė ND pazymiai EGZ įvertinimas");
 
             bool run = true;
-            string input;
           
-            List<Person> data = new List<Person>();
+          
+         
             while(run)
             {
                 Console.WriteLine("Vardas Pavarde, spauskite q ir enter");
@@ -56,9 +90,11 @@ namespace LaboratorinisAtsiskaitymas
                 }
                 else
                 {
-          
-                    List<string> fullName = input.Split(' ').ToList();
-     
+
+                    List<string> fullName = new List<string>{ "None", "None" };
+
+                    List<string> temp = input.Split(' ').ToList();
+                    if (temp.Count == 2) { fullName = temp; }
 
                     Console.WriteLine("Įveskite mokinio pazymius 10 balų skalėje tokiu formatu: 5 3 10 9 0 1 10\n Jeigu norite, jog skaičiai būtų sugeneruoti atsitiktinai spauskite r");
                     input = Console.ReadLine();
@@ -74,6 +110,9 @@ namespace LaboratorinisAtsiskaitymas
                     }
                     else
                     {
+                
+                        if (!input.Any(x => !char.IsLetter(x))) { continue; }
+                       
                         List<string> numbers = input.Split(' ').ToList();
 
                         foreach (string number in numbers)
@@ -95,6 +134,7 @@ namespace LaboratorinisAtsiskaitymas
                 }
 
             }
+            data = data.OrderBy(p => p.Name).ToList();
             printData(data);
             
 

@@ -14,6 +14,7 @@ namespace LaboratorinisAtsiskaitymas
             public string Surname;
             public float median;
             public float average;
+            public string type;
         }
     }
 }

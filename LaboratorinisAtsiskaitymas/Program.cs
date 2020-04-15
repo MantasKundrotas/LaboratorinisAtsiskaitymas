@@ -14,7 +14,9 @@ namespace LaboratorinisAtsiskaitymas
         {
 
             //generateData();
-            calculateInferance();
+            calculateInferance(); // list
+            calculateInferance2(); // linkedlist
+            calculateInferance3(); // queue
             v1();
             Console.ReadKey();
         }
@@ -22,7 +24,50 @@ namespace LaboratorinisAtsiskaitymas
 
 
 
+        static void readTxt3(ref Queue<Class1.Person> data, string filePath, Boolean newtype)
+        {
+            Console.WriteLine(filePath);
+            List<int> scores = new List<int>();
 
+            float egz = 0.0f;
+            float final_avg = 0.0f;
+            float final_median = 0.0f;
+            string type = "";
+            try
+            {
+                string[] lines = System.IO.File.ReadAllLines(filePath);
+                for (int x = 0; x < lines.Length; x++)
+                {
+                    type = "galvociai";
+                    List<string> values = lines[x].Split(' ').ToList();
+
+                    if (values[2] == "ND1") { continue; }
+                    //Console.WriteLine(lines.Length.ToString() + " " + values[2]);
+                    for (int i = 2; i < values.Count - 1; i++)
+                    {
+
+                        scores.Add(Int32.Parse(values[i]));
+                    }
+
+                    egz = float.Parse(values[values.Count - 1]);
+                    final_avg = 0.3f * AVG(scores) + 0.7f * egz;
+                    final_median = 0.3f * Median(scores) + 0.7f * egz; ;
+
+                    if (final_avg < 5) { type = "vargsciukai"; }
+
+
+                    data.Enqueue(new Class1.Person() { Name = values[0], Surname = values[1], median = final_median, average = final_avg, type = type });
+
+                    scores.Clear();
+
+                }
+            }
+            catch (System.IO.IOException e)
+            {
+                Console.WriteLine(e);
+            }
+
+        }
 
         static void readTxt(ref List<Class1.Person> data, string filePath, Boolean newtype)
         {
@@ -70,6 +115,149 @@ namespace LaboratorinisAtsiskaitymas
 
         }
 
+        static void readTxt2(ref LinkedList<Class1.Person> data, string filePath, Boolean newtype)
+        {
+            Console.WriteLine(filePath);
+            List<int> scores = new List<int>();
+
+            float egz = 0.0f;
+            float final_avg = 0.0f;
+            float final_median = 0.0f;
+            string type = "";
+            try
+            {
+                string[] lines = System.IO.File.ReadAllLines(filePath);
+                for (int x = 0; x < lines.Length; x++)
+                {
+                    type = "galvociai";
+                    List<string> values = lines[x].Split(' ').ToList();
+
+                    if (values[2] == "ND1") { continue; }
+                    //Console.WriteLine(lines.Length.ToString() + " " + values[2]);
+                    for (int i = 2; i < values.Count - 1; i++)
+                    {
+
+                        scores.Add(Int32.Parse(values[i]));
+                    }
+
+                    egz = float.Parse(values[values.Count - 1]);
+                    final_avg = 0.3f * AVG(scores) + 0.7f * egz;
+                    final_median = 0.3f * Median(scores) + 0.7f * egz; ;
+
+                    if (final_avg < 5) { type = "vargsciukai"; }
+
+
+                    data.AddLast(new Class1.Person() { Name = values[0], Surname = values[1], median = final_median, average = final_avg, type = type });
+
+
+                    scores.Clear();
+
+                }
+            }
+            catch (System.IO.IOException e)
+            {
+                Console.WriteLine(e);
+            }
+
+        }
+        static void writeFile2(ref LinkedList<Class1.Person> Pdata)
+        {
+            string fPath1 = "C:/Users/mantask/Desktop/LaboratorinisAtsiskaitymas/vargsciukai.txt";
+            string fPath2 = "C:/Users/mantask/Desktop/LaboratorinisAtsiskaitymas/galvociai.txt";
+            string s;
+
+            using (System.IO.StreamWriter varg = new System.IO.StreamWriter(fPath1))
+            {
+                using (System.IO.StreamWriter galv = new System.IO.StreamWriter(fPath2))
+                {
+                    int i = 0;
+                    foreach(Class1.Person p in Pdata)
+                    {
+                        s = String.Format("{0, -20}{1, -20}{2, -10:0.00}{3, 20:0.00}\n", "Pavarde" + i.ToString(), "Vardas" + i.ToString(), p.median, p.average);
+                        i+=1;
+                        if (p.type == "galvociai")
+                        {
+                            galv.Write(s);
+                        }
+                        else { varg.Write(s); }
+                    }
+                }
+            }
+        }
+
+        static void generateData(int num, string fileName)
+        {
+            Random randGenerator = new Random();
+
+            string s;
+            s = String.Format("{0} {1} {2} {3} {4} {5} {6} {7}\n", "Vardas", "Pavarde", "ND1", "ND2", "ND3", "ND4", "ND5", "Egzaminas");
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(fileName))
+            {
+                file.Write(s);
+
+                for (int i = 0; i < num; i++)
+                {
+
+                    s = String.Format("{0} {1} {2} {3} {4} {5} {6} {7}\n", "Vardas" + i.ToString(), "Pavarde" + i.ToString(),
+                randGenerator.Next(0, 11), randGenerator.Next(0, 11),
+                randGenerator.Next(0, 11), randGenerator.Next(0, 11),
+                randGenerator.Next(0, 11), randGenerator.Next(0, 11));
+                    file.Write(s);
+                }
+            }
+        }
+        static void calculateInferance2()
+        {
+            List<string> filePaths = new List<string> { "studentai1.txt", "studentai2.txt", "studentai3.txt", "studentai4.txt", "studentai5.txt" };
+            List<int> numSamples = new List<int> { 1000, 10000, 100000, 1000000, 10000000 };
+            string fPath = "C:/Users/mantask/Desktop/LaboratorinisAtsiskaitymas/";
+
+
+
+            for (int i = 0; i < 5; i++)
+            {
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+
+                LinkedList<Class1.Person> Pdata = new LinkedList<Class1.Person>();
+
+                //generateData(numSamples[i], fPath + filePaths[i]);
+                readTxt2(ref Pdata, fPath + filePaths[i], true);
+
+                writeFile2(ref Pdata);
+                watch.Stop();
+                Console.WriteLine(String.Format("Loop {0} Execution Time: {1} ms", i.ToString(), watch.ElapsedMilliseconds));
+            }
+
+
+
+        }
+        static void calculateInferance3()
+        {
+            List<string> filePaths = new List<string> { "studentai1.txt", "studentai2.txt", "studentai3.txt", "studentai4.txt", "studentai5.txt" };
+            List<int> numSamples = new List<int> { 1000, 10000, 100000, 1000000, 10000000 };
+            string fPath = "C:/Users/mantask/Desktop/LaboratorinisAtsiskaitymas/";
+
+
+
+            for (int i = 0; i < 5; i++)
+            {
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+
+                Queue<Class1.Person> Pdata = new Queue<Class1.Person>(numSamples[i]);
+
+                //generateData(numSamples[i], fPath + filePaths[i]);
+                readTxt3(ref Pdata, fPath + filePaths[i], true);
+
+                writeFile3(ref Pdata);
+                watch.Stop();
+                Console.WriteLine(String.Format("Loop {0} Execution Time: {1} ms", i.ToString(), watch.ElapsedMilliseconds));
+            }
+
+
+
+        }
+
         static void calculateInferance()
         {
             List<string> filePaths = new List<string> { "studentai1.txt", "studentai2.txt", "studentai3.txt", "studentai4.txt", "studentai5.txt" };
@@ -84,7 +272,7 @@ namespace LaboratorinisAtsiskaitymas
 
                 List<Class1.Person> Pdata = new List<Class1.Person>(numSamples[i]);
 
-                generateData(numSamples[i], fPath + filePaths[i]);
+                //generateData(numSamples[i], fPath + filePaths[i]);
                 readTxt(ref Pdata, fPath + filePaths[i], true);
 
                 writeFile(ref Pdata);
@@ -118,28 +306,32 @@ namespace LaboratorinisAtsiskaitymas
             }
         }
 
-        static void generateData(int num, string fileName)
+        static void writeFile3(ref Queue<Class1.Person> Pdata)
         {
-            Random randGenerator = new Random();
-
+            string fPath1 = "C:/Users/mantask/Desktop/LaboratorinisAtsiskaitymas/vargsciukai.txt";
+            string fPath2 = "C:/Users/mantask/Desktop/LaboratorinisAtsiskaitymas/galvociai.txt";
             string s;
-            s = String.Format("{0} {1} {2} {3} {4} {5} {6} {7}\n", "Vardas", "Pavarde", "ND1", "ND2", "ND3", "ND4", "ND5", "Egzaminas");
 
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(fileName))
+            using (System.IO.StreamWriter varg = new System.IO.StreamWriter(fPath1))
             {
-                file.Write(s);
-
-                for (int i = 0; i < num; i++)
+                using (System.IO.StreamWriter galv = new System.IO.StreamWriter(fPath2))
                 {
-
-                    s = String.Format("{0} {1} {2} {3} {4} {5} {6} {7}\n", "Vardas" + i.ToString(), "Pavarde" + i.ToString(),
-                randGenerator.Next(0, 11), randGenerator.Next(0, 11),
-                randGenerator.Next(0, 11), randGenerator.Next(0, 11),
-                randGenerator.Next(0, 11), randGenerator.Next(0, 11));
-                    file.Write(s);
+                    int i = 0;
+                    foreach(Class1.Person p in Pdata)
+                    {
+                        s = String.Format("{0, -20}{1, -20}{2, -10:0.00}{3, 20:0.00}\n", "Pavarde" + i.ToString(), "Vardas" + i.ToString(), p.median, p.average);
+                        i+=1;
+                        if (p.type == "galvociai")
+                        {
+                            galv.Write(s);
+                        }
+                        else { varg.Write(s); }
+                    }
                 }
             }
         }
+
+
         static void v1()
         {
             Random randGenerator = new Random();
